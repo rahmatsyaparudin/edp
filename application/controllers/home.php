@@ -91,7 +91,7 @@ class Home extends CI_Controller
 				}
 				else
 				{
-					$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>Your account successfully login</div>';	
+					$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>You have successfully logged in</div>';	
 				}
 			}
 		}
@@ -131,39 +131,47 @@ class Home extends CI_Controller
 			
 			$this->load->library('upload', $config);
 
-			if (file_exists($uploadPath.$filename))
+			if (empty($filename))
 			{
-				$message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>'.$filename.' is already exist</div>';
+				$message = '<div class="alert alert-danger alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-ban"></i>You have not selected a file yet</div>';
 			}
 			else
 			{
-				if ($this->upload->do_upload('fileToUpload'))
-		        {
-		        	
-		        	$file_name = $this->input->post('file_name');
-		        	$file_desc = $this->input->post('file_desc');
-		        	$fileToUpload = $this->input->post('fileToUpload');
-		        	$location = $uploadPath.$filename;
-		        	$username = 'admin'; #Hardcode
-		        	$description  = empty($file_desc) ? NULL : $file_desc;
-		        	$status = 1;
-
-		        	$data = array(
-		        		'file_name' =>  $file_name, 
-		        		'file_desc' =>  $description, 
-		        		'location' =>  $location, 
-		        		'status' =>  $status, 
-		        		'username' =>  $username,
-		        	);
-
-		        	$this->home_db->insert_file($data);
-		        	$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>'.$filename.' successfully uploaded</div>';
-		        }
-		        else
-		        {
-		            $message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>The file you uploaded is not  *.pdf file format</div>';		         
+				if (file_exists($uploadPath.$filename))
+				{
+					$message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>'.$filename.' is already exist</div>';
 				}
-			}				
+				else
+				{
+					if ($this->upload->do_upload('fileToUpload'))
+			        {
+			        	
+			        	$file_name = $this->input->post('file_name');
+			        	$file_desc = $this->input->post('file_desc');
+			        	$fileToUpload = $this->input->post('fileToUpload');
+			        	$location = $uploadPath.$filename;
+			        	$username = 'admin'; #Hardcode
+			        	$description  = empty($file_desc) ? NULL : $file_desc;
+			        	$status = 1;
+
+			        	$data = array(
+			        		'file_name' =>  $file_name, 
+			        		'file_desc' =>  $description, 
+			        		'location' =>  $location, 
+			        		'status' =>  $status, 
+			        		'username' =>  $username,
+			        	);
+
+			        	$this->home_db->insert_file($data);
+			        	$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>'.$filename.' successfully uploaded</div>';
+			        }
+			        else
+			        {
+			            $message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>The file you uploaded is not supported</div>';		         
+					}
+				}	
+			}
+							
 		}
 					
 		$view['message'] = $message;

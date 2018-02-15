@@ -32,7 +32,7 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-4">
-							<input type="submit" name="signin" id="signin" value="Signin" class="btn btn-primary btn-block btn-flat">
+							<button type="submit" name="signin" id="signin" value="Signin" class="btn btn-primary btn-block btn-flat">Sign in</button>
 						</div>
 					</div>
 				</form>

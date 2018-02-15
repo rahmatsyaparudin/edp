@@ -39,6 +39,7 @@
 								<textarea id="file_desc" name="file_desc" cols="40" rows="2" class="form-control" style="resize: vertical; margin-top: 0px; margin-bottom: 0px; min-height: 50px; max-height: 100px"></textarea>
 							</div>
 						</div> 
+						<i>*Supported File Format : <strong> *.pdf | </strong></i> <!-- Hardcode -->
 					</div>
 
 		            <div class="box-footer">

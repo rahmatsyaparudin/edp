@@ -71,11 +71,21 @@
 
 						<div class="collapse navbar-collapse pull-left" id="navbar-collapse">
 							<ul class="nav navbar-nav">
-								<li><a href="<?=base_url()?>home/timeline">Timeline</a></li>
-								<li><a href="<?=base_url()?>home/upload">File Upload</a></li>
-								<li><a href="<?=base_url()?>home/user">User List</a></li>
-								<li><a href="<?=base_url()?>home/signout">Sign Out</a></li>
-								<li><a href="<?=base_url()?>home/signin">Sign In</a></li>
+								<li <?php if($this->uri->segment(2)=='timeline'){echo ' class="active"';}?>>
+									<a href="<?=base_url()?>home/timeline" onClick="killProcess()" title="Timeline">Timeline</a>
+								</li>
+								<li <?php if($this->uri->segment(2)=='upload'){echo ' class="active"';}?>>
+									<a href="<?=base_url()?>home/upload" onClick="killProcess()" title="File Upload">File Upload</a>
+								</li>
+								<li <?php if($this->uri->segment(2)=='user'){echo ' class="active"';}?>>
+									<a href="<?=base_url()?>home/user" onClick="killProcess()" title="User List">User List</a>
+								</li>
+								<li>
+									<a href="<?=base_url()?>home/signout">Sign Out</a>
+								</li>
+								<li <?php if($this->uri->segment(2)=='signin'){echo ' class="active"';}?>>
+									<a href="<?=base_url()?>home/signin" onClick="killProcess()" title="Sign in">Sign in</a>
+								</li>
 							</ul>
 						</div>
 			

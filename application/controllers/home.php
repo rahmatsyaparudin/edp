@@ -2,10 +2,22 @@
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
-* 
-*/
+ * Home CI_Controller Class
+ * 
+ * @access public
+ * @author Rahmat Syaparudin
+ * @return void
+ * @url http://yoursite.com/home/
+ */
 class Home extends CI_Controller
 {
+	/**
+	 * __construct controller Function
+	 * 
+	 * @access public
+	 * @author Rahmat Syaparudin
+	 * @return void
+	 */
 	function __construct()
 	{
 		parent::__construct();
@@ -14,16 +26,30 @@ class Home extends CI_Controller
 		$this->load->model(array('home_db'));
 	}
 
+	/**
+	 * Index controller Function
+	 * 
+	 * @access public
+	 * @author Rahmat Syaparudin
+	 * @return void
+	 * @url http://yoursite.com/home/index
+	 */
 	public function index()
 	{
+		$view['message'] = $this->session->flashdata('message');
 		$this->timeline();
 	}
 
-	function timeline()
+	/**
+	 * Timeline controller Function
+	 * 
+	 * @access public
+	 * @author Rahmat Syaparudin
+	 * @return void
+	 * @url http://yoursite.com/home/timeline
+	 */
+	public function timeline()
 	{	
-		//$userSession = array('nama' => 'Administrator');
-		//$this->session->set_userdata($userSession);
-		
 		$dir = 'home/';
 		$view['dir'] = $dir;
 		$view['js'] = '';
@@ -31,40 +57,83 @@ class Home extends CI_Controller
 		$this->load->view('template', $view);
 	}
 
+	/**
+	 * Signin controller Function
+	 * 
+	 * @access public
+	 * @author Rahmat Syaparudin
+	 * @return void
+	 * @url http://yoursite.com/home/signin
+	 */
 	function signin()
 	{	
-		$userSession = array('nama' => 'Administrator');
-		$this->session->set_userdata($userSession);
+		$message = '';
+		
+		$username = $this->input->post('username');
+		$password = $this->input->post('password');
+		$isSignIn = $this->input->post('signin');	
+
+		if ($this->input->post('signin'))
+		{
+			if (empty($username) && empty($password))
+			{
+				$message = '<div class="alert alert-danger alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-ban"></i>Login Failed! Username & Password must be fill</div>';
+			}
+			else
+			{
+				if (empty($username))
+				{
+					$message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>Login Failed! Username must be fill</div>';
+				}
+				else if (empty($password))
+				{
+					$message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>Login Failed! Password must be fill</div>';
+				}
+				else
+				{
+					$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>Your account successfully login</div>';	
+				}
+			}
+		}
+
+		$view['message'] = $message;
+		$view['username'] = $username;
+		$view['password'] = $password;
 		
 		$dir = 'home/';
 		$view['dir'] = $dir;
 		$view['js'] = '';
-		$view['content'] = $dir.'login_main';
+		$view['content'] = $dir.'signin_main';
 		$this->load->view('template', $view);
 	}
 
+	/**
+	 * Upload controller Function
+	 * 
+	 * @access public
+	 * @author Rahmat Syaparudin
+	 * @return void
+	 * @url http://yoursite.com/home/upload
+	 */
 	function upload()
 	{	
-		$userSession = array('nama' => 'Administrator');
-		$this->session->set_userdata($userSession);
-		$message = $this->session->flashdata('message');
 		$message = '';
-		
+
 		if($this->input->post('uploadFile') != '')
 		{
 			$filename = $_FILES['fileToUpload']['name'];
 			$filename = preg_replace('/\s+/', '_', $filename);
 	    
-			$config['allowed_types'] = 'pdf';
-			$config['upload_path'] = './uploads/';
+			$uploadPath = './uploads/'; #Hardcode
+			$config['allowed_types'] = 'pdf'; #Hardcode
+			$config['upload_path'] = $uploadPath;
 			$config['file_name'] = $filename;
-			$uploadPath = './uploads/';
-
+			
 			$this->load->library('upload', $config);
 
 			if (file_exists($uploadPath.$filename))
 			{
-				$message = '<div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>'.$filename.' is already exist</div>';		       	
+				$message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>'.$filename.' is already exist</div>';
 			}
 			else
 			{
@@ -75,7 +144,7 @@ class Home extends CI_Controller
 		        	$file_desc = $this->input->post('file_desc');
 		        	$fileToUpload = $this->input->post('fileToUpload');
 		        	$location = $uploadPath.$filename;
-		        	$username = 'admin';
+		        	$username = 'admin'; #Hardcode
 		        	$description  = empty($file_desc) ? NULL : $file_desc;
 		        	$status = 1;
 
@@ -88,23 +157,22 @@ class Home extends CI_Controller
 		        	);
 
 		        	$this->home_db->insert_file($data);
-
-		        	$message = '<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>'.$filename.' successfully uploaded</div>';
+		        	$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>'.$filename.' successfully uploaded</div>';
 		        }
 		        else
 		        {
-		            $message = '<div class="alert alert-warning alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>The file you uploaded is not  *.pdf file format</div>';		         
+		            $message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>The file you uploaded is not  *.pdf file format</div>';		         
 				}
 			}				
 		}
 					
+		$view['message'] = $message;
+
 		$dir = 'home/';
 		$view['dir'] = $dir;
 		$view['js'] = '';
-		$view['message'] = $message;
 		$view['content'] = $dir.'upload_main';
 		$this->load->view('template', $view);
 	}
-	
 }
 ?>

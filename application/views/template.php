@@ -1,5 +1,13 @@
 <?php
-	if (!defined('BASEPATH')) exit('No direct script access allowed');
+	if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+	/**
+	 * Main Template View
+	 * 
+	 * @access public
+	 * @author Rahmat Syaparudin
+	 * @return void
+	 * @url http://yoursite.com/
+	 */
 ?>
 <!DOCTYPE html>
 <html>
@@ -122,6 +130,19 @@
 				}
  			    jQuery("time.timeago").timeago();
 			});
+
+			$(document).ready (function(){
+            	// $("#alert").hide();
+            	$("#alert").fadeTo(3000, 500).slideUp(500, function(){
+             		$("#alert").slideUp(500);
+             	});   
+            	// $("#myWish").click(function showAlert(){
+             //    	$("#alert").fadeTo(2000, 500).slideUp(500, function(){
+             //   			$("#alert").slideUp(500);
+             //    	});   
+            	// });
+ 			});
+
 	
 			$().button('toggle');
 			$().button('dispose');

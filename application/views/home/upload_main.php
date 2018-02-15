@@ -1,3 +1,14 @@
+<?php
+	if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+	/**
+	 * Upload Main View
+	 * 
+	 * @access public
+	 * @author Rahmat Syaparudin
+	 * @return void
+	 * @url http://yoursite.com/home/upload
+	 */
+?>
 <section class="content">
 	<div class="row">
 		<div class="col-md-4"></div>

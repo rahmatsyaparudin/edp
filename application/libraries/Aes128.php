@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 class Aes128 {
-	var $skey 	= 'manix@123@MANIX!'; // you can change it
+	var $skey 	= 'syaparudin@1234#'; // you can change it
 	
     public  function safe_b64encode($string) {
 	

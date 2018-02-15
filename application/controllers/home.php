@@ -10,7 +10,7 @@ class Home extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->helper(array('url', 'form'));
-		$this->load->library(array('session', 'form_validation'));
+		$this->load->library(array('session', 'form_validation', 'aes128'));
 		$this->load->model(array('home_db'));
 	}
 
@@ -53,7 +53,8 @@ class Home extends CI_Controller
 		if($this->input->post('uploadFile') != '')
 		{
 			$filename = $_FILES['fileToUpload']['name'];
-				    
+			$filename = preg_replace('/\s+/', '_', $filename);
+	    
 			$config['allowed_types'] = 'pdf';
 			$config['upload_path'] = './uploads/';
 			$config['file_name'] = $filename;

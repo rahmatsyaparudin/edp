@@ -25,6 +25,7 @@
 							<?php
 								$timestamp = $row->timestamp;
 								$date = date('d M Y', strtotime($timestamp));
+								$dateTime = date('d F Y H:i:s', strtotime($timestamp));
 								echo $date;
 							?>
 						</span>
@@ -39,15 +40,17 @@
 								<div class="row">
 									<div class="col-md-7" style="text-align: justify;">
             							<dl>
-                							<dt>File Description :</dt>
+            								<dd><b>File Name : </b><?=$row->file_name?></dd>
+                							<dd><b>Upload Time : </b><?=$dateTime?></dd>
+            								<dt>File Description :</dt>
                 							<dd><?=$row->file_desc?></dd>
               							</dl>
          							</div>
          						</div>
 								<?php 
 									$loc = $row->location;
-									$url = base_url();
-									$src = str_replace('./', $url, $loc);
+									$url = base_url().'uploads/';
+									$src = str_replace('./uploads/', $url, $loc);
 								?>
 								<div class="row">
 								<div class="col-md-12">

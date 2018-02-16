@@ -1,5 +1,5 @@
 <?php
-	if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+	if (!defined('BASEPATH')) exit('No direct script access allowed');
 	/**
 	 * Main Template View
 	 * 
@@ -74,6 +74,9 @@
 								<li <?php if($this->uri->segment(2)=='timeline'){echo ' class="active"';}?>>
 									<a href="<?=base_url()?>home/timeline" onClick="killProcess()" title="Timeline">Timeline</a>
 								</li>
+								<?php
+									if ($this->session->userdata('isLogin') == TRUE){
+								?>
 								<li <?php if($this->uri->segment(2)=='upload'){echo ' class="active"';}?>>
 									<a href="<?=base_url()?>home/upload" onClick="killProcess()" title="File Upload">File Upload</a>
 								</li>
@@ -83,9 +86,15 @@
 								<li>
 									<a href="<?=base_url()?>home/signout">Sign Out</a>
 								</li>
+								<?php 
+									}else{
+								?>
 								<li <?php if($this->uri->segment(2)=='signin'){echo ' class="active"';}?>>
 									<a href="<?=base_url()?>home/signin" onClick="killProcess()" title="Sign in">Sign in</a>
 								</li>
+								<?php 
+									} 
+								?>
 							</ul>
 						</div>
 			

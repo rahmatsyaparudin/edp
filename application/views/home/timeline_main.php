@@ -49,7 +49,7 @@
 								<i class="fa fa-clock-o" ></i> <time class="timeago" datetime="<?=$row->timestamp?>"></time>
 							</span>
 							<h3 class="timeline-header <?=$bg[$color]?>">
-								<?=$row->name?> upload a file <?=$row->file_name?>
+								<?=$row->name?> <i>upload a file</i> <?=$row->file_name?>
 							</h3>
 
 							<div class="timeline-body">

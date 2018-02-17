@@ -91,13 +91,15 @@ class Home extends CI_Controller
 				{
 					$message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>Login Failed! Password must be fill</div>';
 				}
-				else if (!empty($username) && !empty($password))
+				else if ($username == 'admin' && $password == 'admin') #hardcode
 				{
 					$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>You have successfully logged in</div>';	
 					$userSession = array(
-						'nama' => 'Administrator',
+						'name' => 'Administrator', 
+						'username' => 'admin',
+						'password' => 'admin',
 						'isLogin' => TRUE
-					);
+					);#hardcode
 					$this->session->set_userdata($userSession);
 					echo '<meta http-equiv="refresh" content="4;url='.base_url().'home/upload">';
 				}
@@ -136,13 +138,22 @@ class Home extends CI_Controller
 
 		if($this->input->post('uploadFile') != '')
 		{
-			$filename = $_FILES['fileToUpload']['name'];
-			$filename = preg_replace('/\s+/', '_', $filename);
-	    
-			$uploadPath = './uploads/'; #Hardcode
-			$config['allowed_types'] = 'pdf'; #Hardcode
-			$config['upload_path'] = $uploadPath;
+			$file = $_FILES['fileToUpload']['name'];
+			$filename = preg_replace('/[^a-z0-9](?![^.]*$)/i', '_', $file);
+	    	
+	    	$query = $this->home_db->setting_select_all();
+	    	$data = $this->db->query($query);
+			foreach ($data->result() as $row) 
+			{
+				$uploadPath = $row->path_to_upload.'/';
+				$uploadPathToServer = './'.$row->path_to_upload.'/';
+				$fileformat = ''.$row->file_format.'|'; 
+			}
+			
+			$config['allowed_types'] = $fileformat;
+			$config['upload_path'] = $uploadPathToServer;
 			$config['file_name'] = $filename;
+			$config['overwrite'] = FALSE;
 			
 			$this->load->library('upload', $config);
 
@@ -161,7 +172,7 @@ class Home extends CI_Controller
 					if ($this->upload->do_upload('fileToUpload'))
 			        {
 			        	
-			        	$file_name = $this->input->post('file_name');
+			        	$name = $this->input->post('name');
 			        	$file_desc = $this->input->post('file_desc');
 			        	$fileToUpload = $this->input->post('fileToUpload');
 			        	$location = $uploadPath.$filename;
@@ -170,7 +181,8 @@ class Home extends CI_Controller
 			        	$status = 1;
 
 			        	$data = array(
-			        		'file_name' =>  $file_name, 
+			        		'name' =>  $name,
+			        		'file_name' =>  $filename, 
 			        		'file_desc' =>  $description, 
 			        		'location' =>  $location, 
 			        		'status' =>  $status, 
@@ -212,7 +224,8 @@ class Home extends CI_Controller
 	{
 		$userSession = array(
 			'isLogin' => FALSE,
-			'username' => ''
+			'username' => '',
+			'name' => ''
 		);
 		$this->session->unset_userdata($userSession);
 		$this->session->sess_destroy();

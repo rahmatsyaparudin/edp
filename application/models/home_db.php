@@ -32,7 +32,7 @@ class Home_db extends CI_MODEL
      */
     public function file_select_all()
     {
-        $query =   "SELECT file_id, file_name, file_desc, location, a.timestamp, name 
+        $query =   "SELECT file_id, a.name AS 'fileName', file_name, file_desc, location, a.timestamp, b.name AS 'userName' 
                     FROM file_list a 
                     INNER JOIN user b USING(username) 
                     WHERE a.status = '1' 
@@ -43,6 +43,12 @@ class Home_db extends CI_MODEL
     function user_select_all()
     {
         $query = "SELECT * FROM user WHERE status in (1,0) AND isDeleted IS NULL ORDER BY timestamp DESC";
+        return $query;
+    }
+
+    function setting_select_all()
+    {
+        $query = "SELECT * FROM setting WHERE status = '1'";
         return $query;
     }
 

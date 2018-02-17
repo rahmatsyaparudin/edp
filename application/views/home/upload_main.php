@@ -24,13 +24,13 @@
 						<div class="form-group">
 							<label for="fileUpload" class="control-label col-xs-3">Choose File</label> 
 							<div class="col-xs-9">
-								<input type="file" id="fileToUpload" name="fileToUpload" placeholder="File ID" class="form-control">
+								<input type="file" id="fileToUpload" name="fileToUpload" placeholder="File ID" class="form-control" required="required">
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="fileName" class="control-label col-xs-3">File Name</label> 
 							<div class="col-xs-9">
-								<input id="file_name" name="file_name" placeholder="File Name" type="text" class="form-control" required="required">
+								<input id="name" name="name" placeholder="File Name" type="text" class="form-control" required="required">
 							</div>
 						</div>
 						<div class="form-group">

@@ -78,9 +78,7 @@
 								<li <?php if($this->uri->segment(2)=='timeline'){echo ' class="active"';}?>>
 									<a href="<?=base_url()?>home/timeline" onClick="killProcess()" title="Timeline">Timeline</a>
 								</li>
-								<?php
-									if ($this->session->userdata('isLogin') == TRUE){
-								?>
+								<?php if ($this->session->userdata('isLogin') == TRUE){ ?>
 								<li <?php if($this->uri->segment(2)=='upload'){echo ' class="active"';}?>>
 									<a href="<?=base_url()?>home/upload" onClick="killProcess()" title="File Upload">File Upload</a>
 								</li>
@@ -90,20 +88,20 @@
 								<li>
 									<a href="<?=base_url()?>home/signout">Sign Out</a>
 								</li>
-								<?php 
-									}else{
-								?>
+								<?php }else{ ?>
 								<li <?php if($this->uri->segment(2)=='signin'){echo ' class="active"';}?>>
 									<a href="<?=base_url()?>home/signin" onClick="killProcess()" title="Sign in">Sign in</a>
 								</li>
-								<?php 
-									} 
-								?>
+								<?php } ?>
 							</ul>
 						</div>
-			
+						<?php if ($this->session->userdata('isLogin') == TRUE){ $name = $this->session->userdata('name');?>
 						<div class="navbar-custom-menu">
+							<ul class="nav navbar-nav">
+								<li><a href="#">Welcome, <?=$name?></a></li>
+							</ul>
 						</div>
+						<?php }else{} ?>
 					</div>
 				</nav>
 			</header>

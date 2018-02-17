@@ -27,9 +27,8 @@
 					foreach ($data->result() as $row) 
 					{
 						$loc = $row->location;
-						$url = base_url().'uploads/'; #Hardcode
-						$src = str_replace('./uploads/', $url, $loc); #Hardcode
-						$name = str_replace('./uploads/', '', $loc); #Hardcode
+						$src = base_url().$loc; 
+						$name = $row->fileName;
 
 						$timestamp = $row->timestamp;
 						$date = date('d M Y', strtotime($timestamp));
@@ -49,7 +48,7 @@
 								<i class="fa fa-clock-o" ></i> <time class="timeago" datetime="<?=$row->timestamp?>"></time>
 							</span>
 							<h3 class="timeline-header <?=$bg[$color]?>">
-								<?=$row->name?> <i>upload a file</i> <?=$row->file_name?>
+								<?=$row->userName?> <i>upload a file</i> <?=$name?>
 							</h3>
 
 							<div class="timeline-body">

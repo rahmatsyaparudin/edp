@@ -57,6 +57,10 @@
    			input[type=number]:valid {color: black;}
    			input[type=number]:invalid {color: red;}
 		</style>
+		<?php 
+			if($js!=''){$this->load->view($js);}
+			else{$js = '';}
+		?>
 	</head>
 
 	<body class="hold-transition skin-blue fixed layout-top-nav">
@@ -117,14 +121,10 @@
 
 			<div class="control-sidebar-bg"></div>
 		</div>
-
 		
 		<script src="<?=base_url()?>bower_components/jquery/dist/jquery.min.js"></script>		
 		<script src="<?=base_url()?>bower_components/jquery/dist/jquery.js"></script>
 		<script src="<?=base_url()?>bower_components/jquery-ui/jquery-ui.min.js"></script>
-		<script>
-		  $.widget.bridge('uibutton', $.ui.button);
-		</script>
 		<script src="<?=base_url()?>bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 		<script src="<?=base_url()?>bower_components/datatables/datatables.min.js"></script>
 		<script src="<?=base_url()?>bower_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
@@ -136,7 +136,9 @@
 		<script src="<?=base_url()?>dist/js/adminlte.min.js"></script>
 		<script src="<?=base_url()?>dist/js/jquery.timeago.js" type="text/javascript"></script>
 		<script src="<?=base_url()?>dist/js/pages/dashboard.js"></script>
-		
+		<script>
+		  $.widget.bridge('uibutton', $.ui.button);
+		</script>
 		<script type="text/javascript">
 			$(document).ready(function(){
 				document.onmousedown=disableclick;
@@ -149,17 +151,16 @@
 				}
  			    jQuery("time.timeago").timeago();
 			});
+			$(function() {
+			    $('.radio-group label').on('click', function(){
+			        $(this).removeClass('not-active').siblings().addClass('not-active');
+			    });
+			});
 
 			$(document).ready (function(){
-            	// $("#alert").hide();
             	$("#alert").fadeTo(3000, 500).slideUp(500, function(){
              		$("#alert").slideUp(500);
-             	});   
-            	// $("#myWish").click(function showAlert(){
-             //    	$("#alert").fadeTo(2000, 500).slideUp(500, function(){
-             //   			$("#alert").slideUp(500);
-             //    	});   
-            	// });
+             	});
  			});
 
 	

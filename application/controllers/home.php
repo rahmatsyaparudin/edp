@@ -217,7 +217,57 @@ class Home extends CI_Controller
 		$this->session->unset_userdata($userSession);
 		$this->session->sess_destroy();
 		redirect('home/signin');
-		#echo '<meta http-equiv="refresh" content="0; url='.base_url().'home/timeline">';
+	}
+
+	public function user()
+	{	
+		$query = $this->home_db->user_select_all();
+		$dir = 'home/';
+		$view['dir'] = $dir;
+		$view['query'] = $this->aes128->aesEncrypt($query);
+		$view['iDeferLoading'] = $this->db->query($query)->num_rows();
+		$view['savedQuery'] = $this->aes128->aesEncrypt($query);
+		$view['js'] = $dir.'user_js';
+		$view['content'] = $dir.'user_main';
+		$this->load->view('template', $view);
+	}
+
+	function jsonUser($query = "")
+	{
+		$qry = $this->aes128->aesDecrypt($query);
+		$number = 1;
+		$aaData = array();
+		if (!empty($qry))
+		{
+			$data = $this->db->query($qry);
+			foreach ($data->result() as $row) 
+			{
+				if ($row->status == 1) $status='<label class="btn btn-xs btn-success"><i class="fa fa-check-square-o"></i> Enable</label>'; 
+				else  $status='<label class="btn btn-xs btn-danger"><i class="fa fa-times-circle-o"></i> Disable</label>'; 
+
+
+				$aaData[] = array(
+					$number++,
+					$row->username,
+					$row->name,
+					$row->email,
+					$status,
+					$row->timestamp,
+					'<a href="#" class="btn btn-warning btn-xs" title="Edit" data-toggle="modal" data-target="#modalUser" data-whatever="'.$row->username.'"><i class="fa fa-edit"></i></a>
+				    <a class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-trash"></i></a>'
+				);
+			}
+		}
+		$result['aaData'] = $aaData;
+		echo json_encode($result);
+		return;
+	}
+
+	function jsonUserEdit($id='')
+	{
+		$data = $this->home_db->user_get_byId($id);		
+		echo json_encode($data);
+		return;
 	}
 }
 ?>

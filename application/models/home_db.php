@@ -32,12 +32,26 @@ class Home_db extends CI_MODEL
      */
     public function file_select_all()
     {
-        $query =   "SELECT file_id, file_name, file_desc, location, timestamp, name 
+        $query =   "SELECT file_id, file_name, file_desc, location, a.timestamp, name 
                     FROM file_list a 
                     INNER JOIN user b USING(username) 
                     WHERE a.status = '1' 
-                    ORDER BY timestamp DESC";
+                    ORDER BY a.timestamp DESC";
         return $query;
     }
 
+    function user_select_all()
+    {
+        $query = "SELECT * FROM user WHERE status in (1,0) AND isDeleted IS NULL ORDER BY timestamp DESC";
+        return $query;
+    }
+
+    function user_get_byId($id)
+    {
+        $this->db->select('*');
+        $this->db->from('user');
+        $this->db->where('username', $id);
+        $query = $this->db->get();
+        return $query->row();
+    }
 }

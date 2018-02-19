@@ -26,7 +26,6 @@
   		<link rel="stylesheet" href="<?=base_url()?>plugins/iCheck/all.css">
   		<link rel="stylesheet" href="<?=base_url()?>plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
   		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-	   	<!-- <link rel="stylesheet" href="<?=base_url()?>dist/css/fullscreen-modal.css"> -->
 	   	<style>
 			th {
 			    text-align: left;
@@ -50,6 +49,12 @@
 			.modal-backdrop {
     			background-color: navy;
    			}
+   			.embed-responsive {
+			    position: relative;
+			    display: block;
+			    height: 0;
+			    padding: 0;
+			}
    			input[type=text]:valid {color: black;}
    			input[type=text]:invalid {color: red;}
    			input[type=email]:valid {color: black;}
@@ -82,9 +87,14 @@
 								<li <?php if($this->uri->segment(2)=='upload'){echo ' class="active"';}?>>
 									<a href="<?=base_url()?>home/upload" onClick="killProcess()" title="File Upload">File Upload</a>
 								</li>
+								<!-- <li <?php if($this->uri->segment(2)=='file'){echo ' class="active"';}?>>
+									<a href="<?=base_url()?>home/file" onClick="killProcess()" title="File List">File List</a>
+								</li> -->
+								<?php if ($this->session->userdata('isAdmin') == 1){ ?>
 								<li <?php if($this->uri->segment(2)=='user'){echo ' class="active"';}?>>
 									<a href="<?=base_url()?>home/user" onClick="killProcess()" title="User List">User List</a>
 								</li>
+								<?php } ?>
 								<li>
 									<a href="<?=base_url()?>home/signout">Sign Out</a>
 								</li>
@@ -134,13 +144,15 @@
 		<script src="<?=base_url()?>dist/js/adminlte.min.js"></script>
 		<script src="<?=base_url()?>dist/js/jquery.timeago.js" type="text/javascript"></script>
 		<script src="<?=base_url()?>dist/js/pages/dashboard.js"></script>
-		<script type="text/javascript" src="<?=base_url()?>/dist/js/pdfobject.js"></script>
+		<script src="<?=base_url()?>/dist/js/pdfobject.js"></script>
 		<script>
 		  $.widget.bridge('uibutton', $.ui.button);
 		  PDFJS.workerSrc = '<?=base_url()?>/build/pdf.worker.js';
 		</script>
 		<script type="text/javascript">
 			$(document).ready(function(){
+				jQuery("time.timeago").timeago();
+
 				document.onmousedown=disableclick;
 				status="Sorry, right click disabled for security reason";
 				function disableclick(event){
@@ -148,9 +160,9 @@
 						 alert(status);
 						 return false;    
 					}
-				}
- 			    jQuery("time.timeago").timeago();
+				} 			    
 			});
+
 			$(function() {
 			    $('.radio-group label').on('click', function(){
 			        $(this).removeClass('not-active').siblings().addClass('not-active');
@@ -162,7 +174,6 @@
              		$("#alert").slideUp(500);
              	});
  			});
-
 	
 			$().button('toggle');
 			$().button('dispose');

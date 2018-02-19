@@ -11,57 +11,65 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  */
 class Home extends CI_Controller
 {
-	/**
-	 * __construct controller Function
-	 * 
-	 * @access public
-	 * @author Rahmat Syaparudin
-	 * @return void
-	 */
-	function __construct()
+	public function __construct()
 	{
-		parent::__construct();
-		
+		parent::__construct();		
 		$this->load->helper(array('url', 'form'));
-		$this->load->library(array('session', 'form_validation', 'aes128'));
+		$this->load->library(array('session', 'form_validation', 'aes128', 'pagination'));
 		$this->load->model(array('home_db'));
 	}
 
-	/**
-	 * Index controller Function
-	 * 
-	 * @access public
-	 * @author Rahmat Syaparudin
-	 * @return void
-	 * @url http://yoursite.com/home/index
-	 */
 	public function index()
 	{
 		$view['message'] = $this->session->flashdata('message');
 		$this->timeline();
 	}
 
-	/**
-	 * Timeline controller Function
-	 * 
-	 * @access public
-	 * @author Rahmat Syaparudin
-	 * @return void
-	 * @url http://yoursite.com/home/timeline
-	 */
 	public function timeline()
-	{	
+	{
+		$total_row = $this->home_db->total_rows();
+		$page_num = ($this->uri->segment(4)) ? $this->uri->segment(4) : 1;
+		
+		$config = array();
+		$config['base_url'] = base_url().'home/timeline/page';
+		$config['total_rows'] = $total_row;
+		$config['per_page'] = 6;	
+		$config['uri_segment'] = 4;
+		$config['use_page_numbers'] = TRUE;
+		$config['first_url'] = '1';
+		$config['full_tag_open'] = "<ul class='pagination pagination-sm pagination-centered'>";
+      	$config['full_tag_close'] ="</ul>";
+	    $config['num_tag_open'] = '<li>';
+	    $config['num_tag_close'] = '</li>';
+	    $config['cur_tag_open'] = "<li class='disabled'><li class='active'><a href='#'>";
+	    $config['cur_tag_close'] = "<span class='sr-only'></span></a></li>";
+	    $config['next_link'] = 'Next';
+	    $config['next_tag_open'] = "<li>";
+	    $config['next_tagl_close'] = "</li>";
+	    $config['prev_link'] = 'Previous';
+	    $config['prev_tag_open'] = "<li>";
+	    $config['prev_tagl_close'] = "</li>";
+	    $config['first_tag_open'] = "<li>";
+	    $config['first_tagl_close'] = "</li>";
+	    $config['last_tag_open'] = "<li>";
+	    $config['last_tagl_close'] = "</li>";
+	    $config['first_link'] = 'First';
+    	$config['last_link'] = 'Last';
+    	$offset = ($config['per_page'] * $page_num) - $config['per_page'];
+		$this->pagination->initialize($config);
+		
 		$dir = 'home/';
 		$view['dir'] = $dir;
 		$view['js'] = '';
 		$view['content'] = $dir.'timeline_main';
+		$view['results'] = $this->home_db->file_select_all($config["per_page"], $offset);
+		$view['pages'] = $this->pagination->create_links();
 		$this->load->view('template', $view);
 	}
 
 	public function viewFullscreen($id)
 	{	
-		$query = "SELECT location from file_list where file_id = ".$id;
-		$data = $this->db->query($query)->row()->location;
+		$data = $this->home_db->select_file_fullscreen($id);
 
 		$dir = 'home/';
 		$view['dir'] = $dir;
@@ -71,19 +79,10 @@ class Home extends CI_Controller
 		$this->load->view('template', $view);
 	}
 
-	/**
-	 * Signin controller Function
-	 * 
-	 * @access public
-	 * @author Rahmat Syaparudin
-	 * @return void
-	 * @url http://yoursite.com/home/signin
-	 */
-	function signin()
+	public function signin()
 	{	
 		if($this->session->userdata("isLogin")==TRUE){redirect('home/signout');}
-		$message = '';
-		
+		$message = '';		
 		$username = trim($this->input->post('username'));
 		$password = trim($this->input->post('password'));
 		$isSignIn = trim($this->input->post('signin'));	
@@ -112,10 +111,10 @@ class Home extends CI_Controller
 					$getName = '';
 					$getStatus = 0;
 					$getDeleted = 0;
+					$isAdmin = 0;
 
-					$query = $this->home_db->user_login($username);
-					$data = $this->db->query($query)->result();
-					$cekRow = $this->db->query($query)->row();
+					$data = $this->home_db->user_login($username);
+					$cekRow = $this->home_db->user_login_check_row($username);
 					foreach ($data as $row)
 					{
 						$getUser = $row->username;
@@ -123,12 +122,13 @@ class Home extends CI_Controller
 						$getName = $row->name;
 						$getStatus = $row->status;
 						$getDeleted = $row->isDeleted;
+						$getAdmin = $row->isAdmin;
+						$getAdmin  = empty($getAdmin) ? 0 : $getAdmin;
 					}
 
 					if ($username != $getUser)
 					{
-						echo $getUser;
-						$message = '<div class="alert alert-danger alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-remove"></i>Sorry! your username doesnt exist</div>';
+						$message = '<div class="alert alert-danger alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-remove"></i>Sorry! The username '.$username.' doesnt exist</div>';
 					}
 					else if ($verify_password != $getPassword)
 					{
@@ -136,14 +136,22 @@ class Home extends CI_Controller
 					}
 					else if ($username == $getUser && $verify_password == $getPassword)
 					{
-						$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>You have successfully logged in</div>';	
-						$userSession = array(
-							'name' => $getName, 
-							'username' => $getUser,
-							'isLogin' => TRUE
-						);
-						$this->session->set_userdata($userSession);
-						echo '<meta http-equiv="refresh" content="4;url='.base_url().'home/upload">';
+						if ($getStatus == 0)
+						{
+							$message = '<div class="alert alert-danger alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-remove"></i>Sorry! your account has been disabled. Please contact your Administrator</div>';
+						}
+						else
+						{
+							$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>You have successfully logged in</div>';	
+							$userSession = array(
+								'name' => $getName, 
+								'username' => $getUser,
+								'isAdmin' => $getAdmin,
+								'isLogin' => TRUE
+							);
+							$this->session->set_userdata($userSession);
+							echo '<meta http-equiv="refresh" content="4;url='.base_url().'home/upload">';
+						}						
 					}
 					else
 					{
@@ -157,26 +165,29 @@ class Home extends CI_Controller
 			}
 		}
 
-		$view['message'] = $message;
-		$view['username'] = $username;
-		$view['password'] = $password;
-		
 		$dir = 'home/';
 		$view['dir'] = $dir;
 		$view['js'] = '';
 		$view['content'] = $dir.'signin_main';
+		$view['message'] = $message;
+		$view['username'] = $username;
+		$view['password'] = $password;
 		$this->load->view('template', $view);
 	}
 
-	/**
-	 * Upload controller Function
-	 * 
-	 * @access public
-	 * @author Rahmat Syaparudin
-	 * @return void
-	 * @url http://yoursite.com/home/upload
-	 */
-	function upload()
+	public function signout() 
+	{
+		$userSession = array(
+			'isLogin' => FALSE,
+			'username' => '',
+			'name' => ''
+		);
+		$this->session->unset_userdata($userSession);
+		$this->session->sess_destroy();
+		redirect('home/signin');
+	}
+
+	public function upload()
 	{
 		if($this->session->userdata("isLogin")!=TRUE){redirect('home/signin');}
 
@@ -187,9 +198,8 @@ class Home extends CI_Controller
 			$file = $_FILES['fileToUpload']['name'];
 			$filename = preg_replace('/[^a-z0-9](?![^.]*$)/i', '_', $file);
 	    	
-	    	$query = $this->home_db->setting_select_all();
-	    	$data = $this->db->query($query);
-			foreach ($data->result() as $row) 
+	    	$data = $this->home_db->setting_select_all();
+	    	foreach ($data as $row) 
 			{
 				$uploadPath = $row->path_to_upload.'/';
 				$uploadPathToServer = './'.$row->path_to_upload.'/';
@@ -231,7 +241,7 @@ class Home extends CI_Controller
 			        		'file_desc' =>  $description, 
 			        		'location' =>  $location, 
 			        		'status' =>  $status, 
-			        		'username' =>  $username,
+			        		'username' =>  $getUser,
 			        	);
 
 			        	$this->home_db->insert_file($data);
@@ -242,39 +252,15 @@ class Home extends CI_Controller
 			            $message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>The file you uploaded is not supported</div>';		         
 					}
 				}	
-			}
-							
+			}							
 		}
-					
-		$view['message'] = $message;
-
+				
 		$dir = 'home/';
 		$view['dir'] = $dir;
 		$view['js'] = '';
 		$view['content'] = $dir.'upload_main';
+		$view['message'] = $message;
 		$this->load->view('template', $view);
-	}
-
-
-
-	/**
-	 * Signout controller Function
-	 * 
-	 * @access public
-	 * @author Rahmat Syaparudin
-	 * @return void
-	 * @url http://yoursite.com/home/signout
-	 */
-	public function signout() 
-	{
-		$userSession = array(
-			'isLogin' => FALSE,
-			'username' => '',
-			'name' => ''
-		);
-		$this->session->unset_userdata($userSession);
-		$this->session->sess_destroy();
-		redirect('home/signin');
 	}
 
 	public function user()
@@ -288,18 +274,15 @@ class Home extends CI_Controller
 
 	function jsonUser()
 	{
-		$query = $this->home_db->user_select_all();
-		$qry = $query;
+		$data = $this->home_db->user_select_all();
 		$number = 1;
 		$aaData = array();
-		if (!empty($qry))
+		if (!empty($data))
 		{
-			$data = $this->db->query($qry);
-			foreach ($data->result() as $row) 
+			foreach ($data as $row) 
 			{
 				if ($row->status == 1) $status='<label class="btn btn-xs btn-success"><i class="fa fa-check-square-o"></i> Enable</label>'; 
 				else  $status='<label class="btn btn-xs btn-danger"><i class="fa fa-times-circle-o"></i> Disable</label>'; 
-
 
 				$aaData[] = array(
 					$number++,

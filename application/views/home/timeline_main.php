@@ -9,6 +9,7 @@
 	 * @url http://yoursite.com/home/timeline
 	 */
 ?>
+<script src="<?=base_url()?>/dist/js/pdfobject.min.js"></script>
 <section class="content">	
 	<div class="row">
 		<div class="col-md-3"></div>
@@ -22,8 +23,10 @@
 				</li>
 				<?php 
 					$bg = array('bg-red', 'bg-green', 'bg-maroon', 'bg-yellow', 'bg-blue', 'bg-orange', 'bg-navy', 'bg-black', 'bg-teal', 'bg-purple');
+					$number =0;
 					foreach ($results as $row) 
 					{
+						$number++;
 						$loc = $row->location;
 						$src = base_url().$loc.'#pagemode=thumbs&navpanes=1&toolbar=0&statusbar=1&view=FitH'; 
 						$name = $row->fileName;
@@ -64,7 +67,22 @@
 				
 							<div class="row">
 								<div class="col-md-12">
-									<embed width="100%" src="<?=$src?>"></embed>
+									<div id="results<?=$number?>" class="hidden"></div>									
+									<script>
+										var status = (PDFObject.supportsPDFs) ? "supports" : "does not support";
+										var el = document.querySelector("#results<?=$number?>");
+										el.setAttribute("class", (PDFObject.supportsPDFs) ? "success" : "fail");
+										el.innerHTML = "This browser " + status + " inline PDFs";
+										if (status == "does not support")
+										{
+											el.innerHTML = '<div class="row"><div class="col-md-12"><div class="alert alert-warning alert-dismissible"><i class="icon fa fa-warning"></i>This browser does not support inline PDFs. Please use Google Chrome or Opera.</div></div></div>';
+										}
+										else if (status == "supports")
+										{
+											el.innerHTML = '<embed id="support" width="100%" src="<?=$src?>"></embed>'
+										}
+									</script>
+									
 								</div>
 							</div>
 						</div>

@@ -20,7 +20,7 @@
 			bServerSide		: false,
 			bDestroy		: true,
 			bRetrieve		: true,
-			sAjaxSource		: "<?=base_url()?>home/jsonUser/<?=$savedQuery?>",
+			sAjaxSource		: "<?=base_url()?>home/jsonUser",
 			fnInitComplete: function()
 				{this.parent().applyTemplateSetup();},
 			fnServerData 	: function(sSource, aoData, fnCallback, oSettings){

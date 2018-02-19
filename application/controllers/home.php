@@ -58,6 +58,19 @@ class Home extends CI_Controller
 		$this->load->view('template', $view);
 	}
 
+	public function viewFullscreen($id)
+	{	
+		$query = "SELECT location from file_list where file_id = ".$id;
+		$data = $this->db->query($query)->row()->location;
+
+		$dir = 'home/';
+		$view['dir'] = $dir;
+		$view['js'] = '';
+		$view['data'] = $data;
+		$view['content'] = $dir.'viewFullscreen_main';
+		$this->load->view('template', $view);
+	}
+
 	/**
 	 * Signin controller Function
 	 * 
@@ -266,20 +279,17 @@ class Home extends CI_Controller
 
 	public function user()
 	{	
-		$query = $this->home_db->user_select_all();
 		$dir = 'home/';
 		$view['dir'] = $dir;
-		$view['query'] = $this->aes128->aesEncrypt($query);
-		$view['iDeferLoading'] = $this->db->query($query)->num_rows();
-		$view['savedQuery'] = $this->aes128->aesEncrypt($query);
 		$view['js'] = $dir.'user_js';
 		$view['content'] = $dir.'user_main';
 		$this->load->view('template', $view);
 	}
 
-	function jsonUser($query = "")
+	function jsonUser()
 	{
-		$qry = $this->aes128->aesDecrypt($query);
+		$query = $this->home_db->user_select_all();
+		$qry = $query;
 		$number = 1;
 		$aaData = array();
 		if (!empty($qry))

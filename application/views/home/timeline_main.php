@@ -9,7 +9,7 @@
 	 * @url http://yoursite.com/home/timeline
 	 */
 ?>
-<section class="content">
+<section class="content">	
 	<div class="row">
 		<div class="col-md-3"></div>
 		<div class="col-md-6">
@@ -27,7 +27,7 @@
 					foreach ($data->result() as $row) 
 					{
 						$loc = $row->location;
-						$src = base_url().$loc; 
+						$src = base_url().$loc.'#pagemode=thumbs&navpanes=1&toolbar=0&statusbar=1&view=FitH'; 
 						$name = $row->fileName;
 
 						$timestamp = $row->timestamp;
@@ -65,13 +65,13 @@
          						</div>
 								<div class="row">
 								<div class="col-md-12">
-									<embed src="<?=$src?>" type='application/pdf'>
+									<embed src="<?=$src?>"></embed>
 								</div>
 							</div>
 							</div>
 					
 							<div class="timeline-footer">
-								<a href="<?=$src?>" target="_blank" class="btn btn-xs <?=$bg[$color]?>">View in Fullscreen</a>
+								<a target="_blank" href="<?=base_url()?>home/viewFullscreen/<?=$row->file_id?>"  class="btn btn-xs <?=$bg[$color]?>">View in Fullscreen</a>
 							</div>
 						</div>
 					</li>
@@ -88,3 +88,4 @@
 		</div>
 	</div>
 </section>
+

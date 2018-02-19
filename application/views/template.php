@@ -26,7 +26,7 @@
   		<link rel="stylesheet" href="<?=base_url()?>plugins/iCheck/all.css">
   		<link rel="stylesheet" href="<?=base_url()?>plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
   		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-	   	
+	   	<!-- <link rel="stylesheet" href="<?=base_url()?>dist/css/fullscreen-modal.css"> -->
 	   	<style>
 			th {
 			    text-align: left;
@@ -62,8 +62,8 @@
 			else{$js = '';}
 		?>
 	</head>
-
-	<body class="hold-transition skin-blue fixed layout-top-nav">
+	<?php if($this->uri->segment(2)!='viewFullscreen'){$fixed = 'fixed';} else {$fixed = '';}?>
+	<body class="hold-transition skin-blue <?=$fixed?> layout-top-nav">
 		<div class="wrapper">
 			<header class="main-header">
 				<nav class="navbar navbar-static-top">
@@ -134,8 +134,10 @@
 		<script src="<?=base_url()?>dist/js/adminlte.min.js"></script>
 		<script src="<?=base_url()?>dist/js/jquery.timeago.js" type="text/javascript"></script>
 		<script src="<?=base_url()?>dist/js/pages/dashboard.js"></script>
+		<script type="text/javascript" src="<?=base_url()?>/dist/js/pdfobject.js"></script>
 		<script>
 		  $.widget.bridge('uibutton', $.ui.button);
+		  PDFJS.workerSrc = '<?=base_url()?>/build/pdf.worker.js';
 		</script>
 		<script type="text/javascript">
 			$(document).ready(function(){

@@ -60,4 +60,20 @@ class Home_db extends CI_MODEL
         $query = $this->db->get();
         return $query->row();
     }
+
+     function supported_format()
+    {
+        $this->db->select('file_format');
+        $this->db->from('setting');
+        $query = $this->db->get();
+        return $query->row()->file_format;
+    }
+
+    function user_login($username)
+    {
+        $query = "SELECT name, username, password, status, isDeleted 
+                  FROM user 
+                  WHERE username = '".$username."' AND status = 1";
+        return $query;
+    }
 }

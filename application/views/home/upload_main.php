@@ -39,7 +39,11 @@
 								<textarea id="file_desc" name="file_desc" cols="40" rows="2" class="form-control" style="resize: vertical; margin-top: 0px; margin-bottom: 0px; min-height: 50px; max-height: 100px"></textarea>
 							</div>
 						</div> 
-						<i>*Supported File Format : <strong> *.pdf | </strong></i> <!-- Hardcode -->
+						<?php
+							$supported_file = $this->home_db->supported_format();
+							$supported_file = str_replace(',', '|*.', $supported_file);
+						?>
+						<i>*Supported File Format : <strong>*.<?=$supported_file?>| </strong></i>
 					</div>
 
 		            <div class="box-footer">

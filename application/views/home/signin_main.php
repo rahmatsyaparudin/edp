@@ -37,8 +37,8 @@
 					</div>
 				</form>
 				<br>
-				<a href="#">I forgot my password</a><br>
-				<a href="register.html" class="text-center">Register a new membership</a>
+				<!-- <a href="#">I forgot my password</a><br>
+				<a href="register.html" class="text-center">Register a new membership</a> -->
 			</div>
 		</div>
 	</div>
@@ -48,7 +48,7 @@
 			$('input').iCheck({
 				checkboxClass: 'icheckbox_square-blue',
 				radioClass: 'iradio_square-blue',
-				increaseArea: '20%' // optional
+				increaseArea: '20%'
 			});
 		});
 	</script>

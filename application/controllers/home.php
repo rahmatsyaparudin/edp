@@ -71,9 +71,10 @@ class Home extends CI_Controller
 		if($this->session->userdata("isLogin")==TRUE){redirect('home/signout');}
 		$message = '';
 		
-		$username = $this->input->post('username');
-		$password = $this->input->post('password');
-		$isSignIn = $this->input->post('signin');	
+		$username = trim($this->input->post('username'));
+		$password = trim($this->input->post('password'));
+		$isSignIn = trim($this->input->post('signin'));	
+		$verify_password = $this->aes128->aesEncrypt($password);
 
 		if ($this->input->post('signin'))
 		{
@@ -91,22 +92,54 @@ class Home extends CI_Controller
 				{
 					$message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>Login Failed! Password must be fill</div>';
 				}
-				else if ($username == 'admin' && $password == 'admin') #hardcode
+				else if (!empty($username) && !empty($password))
 				{
-					$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>You have successfully logged in</div>';	
-					$userSession = array(
-						'name' => 'Administrator', 
-						'username' => 'admin',
-						'password' => 'admin',
-						'isLogin' => TRUE
-					);#hardcode
-					$this->session->set_userdata($userSession);
-					echo '<meta http-equiv="refresh" content="4;url='.base_url().'home/upload">';
+					$getUser = '';
+					$getPassword = '';
+					$getName = '';
+					$getStatus = 0;
+					$getDeleted = 0;
+
+					$query = $this->home_db->user_login($username);
+					$data = $this->db->query($query)->result();
+					$cekRow = $this->db->query($query)->row();
+					foreach ($data as $row)
+					{
+						$getUser = $row->username;
+						$getPassword = $row->password;
+						$getName = $row->name;
+						$getStatus = $row->status;
+						$getDeleted = $row->isDeleted;
+					}
+
+					if ($username != $getUser)
+					{
+						echo $getUser;
+						$message = '<div class="alert alert-danger alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-remove"></i>Sorry! your username doesnt exist</div>';
+					}
+					else if ($verify_password != $getPassword)
+					{
+						$message = '<div class="alert alert-warning alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-warning"></i>Sorry! your password doesnt match</div>';
+					}
+					else if ($username == $getUser && $verify_password == $getPassword)
+					{
+						$message = '<div class="alert alert-success alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-check"></i>You have successfully logged in</div>';	
+						$userSession = array(
+							'name' => $getName, 
+							'username' => $getUser,
+							'isLogin' => TRUE
+						);
+						$this->session->set_userdata($userSession);
+						echo '<meta http-equiv="refresh" content="4;url='.base_url().'home/upload">';
+					}
+					else
+					{
+						$message = '<div class="alert alert-danger alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-remove"></i>Sorry! wrong details</div>';
+					}
 				}
 				else
 				{
 					$message = '<div class="alert alert-danger alert-dismissible" id="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><i class="icon fa fa-close"></i>You have no authorize</div>';
-
 				}
 			}
 		}
@@ -171,12 +204,11 @@ class Home extends CI_Controller
 				{
 					if ($this->upload->do_upload('fileToUpload'))
 			        {
-			        	
 			        	$name = $this->input->post('name');
 			        	$file_desc = $this->input->post('file_desc');
 			        	$fileToUpload = $this->input->post('fileToUpload');
 			        	$location = $uploadPath.$filename;
-			        	$username = 'admin'; #Hardcode
+			        	$getUser = $this->session->userdata('username'); 
 			        	$description  = empty($file_desc) ? NULL : $file_desc;
 			        	$status = 1;
 
